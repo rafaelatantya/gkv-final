@@ -1,0 +1,23 @@
+{
+  "name": "gkv-final",
+  "version": "1.0.0",
+  "description": "Ular Tangga Tata Tertib IPB University - Proyek Akhir Mata Kuliah Grafika Komputer dan Visualisasi",
+  "main": "src/index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "boardgame",
+    "education",
+    "ipb-university",
+    "canvas",
+    "computer-graphics",
+    "visualization"
+  ],
+  "author": "Ayubi Fathan, Nafil Khautal Budiono, Muhammad Syaamil, Rafael Federico Atantya",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

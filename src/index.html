@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ular Tangga Tata Tertib IPB University</title>
+    <!-- Modern Typography: Google Fonts (Outfit & Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Design System & Components Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/board.css">
+    <link rel="stylesheet" href="css/ui.css">
+</head>
+<body>
+
+    <!-- Main Container Game -->
+    <main id="app-container">
+
+        <!-- 1. MAIN MENU SCREEN -->
+        <section id="screen-menu" class="game-screen">
+            <div class="glass-panel menu-content">
+                <div class="logo-area">
+                    <!-- Placeholder Icon/Logo IPB -->
+                    <div class="logo-ipb">🎓</div>
+                    <h1>Ular Tangga Tata Tertib</h1>
+                    <h2>IPB University</h2>
+                </div>
+                <p class="menu-tagline">Simulasi Perjalanan Transformasi Mahasiswa Menjadi Duta Kampus Berprestasi dan Penuh Disiplin</p>
+                <div class="menu-actions">
+                    <button id="btn-to-setup" class="btn btn-primary btn-glow">Mulai Permainan</button>
+                    <button id="btn-to-credits" class="btn btn-secondary">Kredit Pengembang</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. GAME SETUP SCREEN -->
+        <section id="screen-setup" class="game-screen hidden">
+            <div class="glass-panel setup-content">
+                <button class="btn-back btn-close-setup">← Kembali</button>
+                <h2>Konfigurasi Permainan</h2>
+                <p class="section-desc">Tentukan jumlah pemain (2-4). Slot kosong akan otomatis diisi oleh AI Bot.</p>
+                
+                <div class="setup-group">
+                    <label>Jumlah Pemain Nyata:</label>
+                    <div class="player-count-selector">
+                        <button class="btn-selector active" data-count="1">1 Player</button>
+                        <button class="btn-selector" data-count="2">2 Players</button>
+                        <button class="btn-selector" data-count="3">3 Players</button>
+                        <button class="btn-selector" data-count="4">4 Players</button>
+                    </div>
+                </div>
+
+                <div class="players-input-list">
+                    <!-- Form nama player akan dirender dinamis di sini oleh JS -->
+                    <div class="player-input-card" id="card-p1">
+                        <span class="player-badge p1">Pemain 1</span>
+                        <input type="text" id="input-p1-name" value="Mahasiswa A" placeholder="Nama Pemain 1">
+                        <span class="player-type">Manusia (Aktif)</span>
+                    </div>
+                    <div class="player-input-card bot" id="card-p2">
+                        <span class="player-badge p2">Pemain 2</span>
+                        <input type="text" id="input-p2-name" value="Bot Antigravity" placeholder="Nama Pemain 2" disabled>
+                        <span class="player-type">AI Bot</span>
+                    </div>
+                    <div class="player-input-card bot" id="card-p3">
+                        <span class="player-badge p3">Pemain 3</span>
+                        <input type="text" id="input-p3-name" value="Bot IPB" placeholder="Nama Pemain 3" disabled>
+                        <span class="player-type">AI Bot</span>
+                    </div>
+                    <div class="player-input-card bot" id="card-p4">
+                        <span class="player-badge p4">Pemain 4</span>
+                        <input type="text" id="input-p4-name" value="Bot Rektorat" placeholder="Nama Pemain 4" disabled>
+                        <span class="player-type">AI Bot</span>
+                    </div>
+                </div>
+
+                <button id="btn-start-game" class="btn btn-primary btn-glow btn-wide">Gas! Mulai Kuliah</button>
+            </div>
+        </section>
+
+        <!-- 3. PROLOGUE SCREEN -->
+        <section id="screen-prologue" class="game-screen hidden">
+            <div class="glass-panel prologue-content">
+                <div class="dialogue-header">💡 Masa Persiapan Kuliah (PPKU)</div>
+                <div class="dialogue-box">
+                    <div class="character-visual-placeholder">🧑‍🎤</div>
+                    <div class="dialogue-text-area">
+                        <h4 id="dialogue-speaker">Si Punk (Mahasiswa Baru)</h4>
+                        <p id="dialogue-text">"Ah, kuliah di IPB ternyata ketat juga ya... Rambutku masih acak-acakan begini, baju juga asal-asalan. Apa aku bisa survive dan mematuhi semua tata tertib kampus yang kompleks ini sampai wisuda nanti?"</p>
+                    </div>
+                </div>
+                <div class="prologue-actions">
+                    <button id="btn-next-dialogue" class="btn btn-primary">Lanjut →</button>
+                    <button id="btn-skip-prologue" class="btn btn-secondary">Skip Cerita</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. BOARD GAMEPLAY SCREEN -->
+        <section id="screen-gameplay" class="game-screen hidden">
+            <!-- Sidebar Panel: Status Pemain & Log Aktifitas -->
+            <aside class="sidebar-panel glass-panel">
+                <div class="sidebar-header">
+                    <h3>🏆 Status Mahasiswa</h3>
+                </div>
+                
+                <!-- Status List Pemain (Evolusi & DO counter) -->
+                <div id="player-status-list">
+                    <!-- Dirender dinamis oleh JS -->
+                </div>
+
+                <!-- Info Giliran Aktif -->
+                <div class="turn-indicator-box">
+                    <p>Giliran Saat Ini:</p>
+                    <div id="current-player-badge" class="player-badge p1">Pemain 1</div>
+                    <div class="turn-timer">⌛ <span id="timer-value">10</span>s</div>
+                </div>
+
+                <!-- Log Aktifitas Game -->
+                <div class="activity-log-box">
+                    <h4>📝 Berita Kampus</h4>
+                    <div id="log-messages" class="log-content">
+                        <p class="log-item system">Game dimulai! Semua bersiap di petak 0.</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Game Area: Papan Permainan -->
+            <div class="board-container">
+                <!-- SVG Overlay untuk menggambar Ular dan Tangga dinamis -->
+                <svg id="board-svg-overlay"></svg>
+                
+                <!-- Board Grid 10x10 (100 Petak) -->
+                <div id="game-board" class="board-grid">
+                    <!-- Dirender dinamis oleh board.js (100 petak dari 100 ke 1) -->
+                </div>
+            </div>
+
+            <!-- Control Panel: Dice Gauge & Audio -->
+            <div class="control-panel glass-panel">
+                <div class="audio-controls">
+                    <button id="btn-toggle-bgm" class="btn-circle">🎵</button>
+                    <button id="btn-toggle-sfx" class="btn-circle">🔊</button>
+                </div>
+
+                <!-- Dice Gauge Control System -->
+                <div class="dice-gauge-container">
+                    <div class="gauge-label">🎯 Bidik Target Dadu (LINE Let's Get Rich style)</div>
+                    <div class="gauge-bar-wrapper">
+                        <div id="dice-gauge-bar" class="gauge-bar-fill"></div>
+                        <div class="gauge-markers">
+                            <span class="marker" style="left: 25%">Lvl 1 (2-3)</span>
+                            <span class="marker" style="left: 50%">Lvl 2 (4-6)</span>
+                            <span class="marker" style="left: 75%">Lvl 3 (7-9)</span>
+                            <span class="marker" style="left: 100%">Lvl 4 (10-12)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="dice-roll-actions">
+                        <button id="btn-roll-dice" class="btn btn-primary btn-glow">TAHAN & LEPAS DADU</button>
+                        <div id="dice-visuals-container">
+                            <div class="dice" id="dice-1">⚀</div>
+                            <div class="dice" id="dice-2">⚀</div>
+                            <div id="dice-result-text">Total: 2</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. POP-UP MODAL WINDOWS (Kuis, Event, Sanksi) -->
+        <div id="modal-container" class="modal-overlay hidden">
+            <!-- Modal Box Generik -->
+            <div class="glass-panel modal-box" id="modal-box">
+                <!-- Header (Ikon & Judul) -->
+                <div class="modal-header" id="modal-header">
+                    <span class="modal-icon" id="modal-icon">❓</span>
+                    <h3 id="modal-title">Pertanyaan Kuis</h3>
+                </div>
+                <!-- Konten dialog/soal -->
+                <div class="modal-body" id="modal-body">
+                    <!-- Dirender dinamis oleh JS -->
+                </div>
+                <!-- Tombol interaksi -->
+                <div class="modal-footer" id="modal-footer">
+                    <!-- Dirender dinamis oleh JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. CREDITS SCREEN -->
+        <section id="screen-credits" class="game-screen hidden">
+            <div class="glass-panel credits-content">
+                <button class="btn-back btn-close-credits">← Kembali</button>
+                <h2>Tim Pengembang Proyek</h2>
+                <h3>Mata Kuliah Grafika Komputer dan Visualisasi</h3>
+                <hr>
+                <div class="team-grid">
+                    <div class="team-card">
+                        <span class="avatar">🧑‍💻</span>
+                        <h4>Ayubi Fathan</h4>
+                        <p class="nim">NIM. M0403241050</p>
+                    </div>
+                    <div class="team-card">
+                        <span class="avatar">🧑‍💻</span>
+                        <h4>Nafil Khautal Budiono</h4>
+                        <p class="nim">NIM. M0403241102</p>
+                    </div>
+                    <div class="team-card">
+                        <span class="avatar">🧑‍💻</span>
+                        <h4>Muhammad Syaamil</h4>
+                        <p class="nim">NIM. M0403241115</p>
+                    </div>
+                    <div class="team-card">
+                        <span class="avatar">🧑‍💻</span>
+                        <h4>Rafael Federico Atantya</h4>
+                        <p class="nim">NIM. M0403241108</p>
+                    </div>
+                </div>
+                <p class="credits-footer">PROGRAM STUDI ILMU KOMPUTER<br>SEKOLAH SAINS DATA, MATEMATIKA, DAN INFORMATIKA<br>INSTITUT PERTANIAN BOGOR (BOGOR 2026)</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Main Bootstrapper Script (Modern ES6 Module) -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
