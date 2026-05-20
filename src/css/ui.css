@@ -736,8 +736,26 @@
 }
 
 /* ==========================================================================
-   7. RESPONSIVITAS LAYOUT GAMEPLAY
+   7. RESPONSIVITAS LAYOUT GAMEPLAY & UI LAYER OVERLAY
    ========================================================================== */
+.ui-layer-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Membiarkan input melewati area kosong UI ke Canvas Phaser */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.ui-layer-container > * {
+    pointer-events: auto; /* Aktifkan interaksi klik kembali pada kartu/panel UI */
+}
+
 @media (max-width: 1000px) {
     #screen-gameplay {
         grid-template-columns: 1fr;
