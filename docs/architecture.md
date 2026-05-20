@@ -1,121 +1,111 @@
-# Arsitektur Proyek dan Deskripsi Berkas
+# Arsitektur Proyek dan Deskripsi Berkas (PhaserJS Edition)
 ### Proyek: Ular Tangga Tata Tertib IPB University
+### Mata Kuliah: Grafika Komputer dan Visualisasi
 
-Proyek ini menggunakan arsitektur web murni (Vanilla Tech Stack) dengan pendekatan **SPA (Single Page Application)** berbasis komponen modern. Untuk memudahkan kolaborasi dan skalabilitas, logika game dipisahkan menjadi modul-modul JavaScript (ES6 Modules) yang saling berinteraksi secara searah (unidirectional data flow).
+Proyek ini dibangun menggunakan **PhaserJS (Phaser 3)**, sebuah engine game HTML5 berkinerja tinggi berbasis WebGL dan Canvas. Logika permainan dan render grafis dikelola secara modular melalui pemisahan adegan (**Phaser Scenes**) dan komponen logika terisolasi. Arsitektur ini memastikan game berjalan stabil di kisaran 60 FPS dengan rendering maksimalis bebas lag.
 
 ---
 
 ## 📂 Struktur Berkas dan Folder
 
-Berikut adalah visualisasi struktur lengkap dari repositori proyek:
+Berikut adalah visualisasi struktur repositori setelah migrasi ke arsitektur PhaserJS:
 
 ```
 gkv-final/
-├── docs/                      # Hub Dokumentasi
+├── docs/                      # Hub Dokumentasi Lengkap
 │   ├── README.md              # Index utama dokumentasi
-│   ├── AGENTS.md              # Batasan operasional & aturan bagi AI Agent
-│   ├── architecture.md        # Panduan berkas & alur data proyek [BERKAS INI]
+│   ├── AGENTS.md              # Batasan operasional AI Agent (Anti-Commit/Push)
+│   ├── architecture.md        # Panduan berkas & alur adegan Phaser [BERKAS INI]
 │   ├── game_rules_mechanics.md# Mekanika permainan & detail dadu
 │   ├── game_content.md        # Bank data tata tertib, kuis, & hadiah
-│   └── assets_design.md       # Spesifikasi audio & evolusi sprite karakter
+│   └── assets_design.md       # Spesifikasi aset Phaser, partikel, & audio
 ├── src/                       # Kode Sumber Utama Game
-│   ├── index.html             # Dokumen HTML utama (DOM & layout global)
+│   ├── index.html             # Entry point HTML5 (menampung Canvas & UI Overlay)
 │   ├── css/
-│   │   ├── main.css           # Desain sistem global (warna, tipografi, grid)
-│   │   ├── board.css          # Styling visualisasi papan permainan & SVG overlay
-│   │   └── ui.css             # Desain menu, dice gauge, status bar, & pop-up modal
+│   │   ├── main.css           # Token warna global & desain Glassmorphism
+│   │   └── ui.css             # Styling UI HUD overlay di atas Canvas
 │   ├── js/
-│   │   ├── app.js             # Navigasi halaman, router, & bootstrapper game
-│   │   ├── game.js            # Engine Core (State Machine, giliran, bot, win/loss)
-│   │   ├── board.js           # Penggambaran Papan 10x10 & SVG Ular/Tangga
-│   │   ├── dice.js            # Mekanika Dice Gauge & lemparan dadu
-│   │   ├── player.js          # Kelas Pemain, evolusi sprite punk -> duta, token
-│   │   ├── quiz.js            # Mekanika Kuis & validasi jawaban
-│   │   └── audio.js           # Sistem pemutar audio BGM dinamis & SFX
-│   └── assets/                # Aset Game
-│       ├── audio/             # Sound Effects (SFX) & Background Music (BGM)
-│       └── sprites/           # File gambar 17 sprite evolusi karakter
-├── README.md                  # Halaman utama repositori GitHub
-├── package.json               # Konfigurasi Live Server (dev, start & testing)
-└── server.js                  # Server HTTP statis Node.js dengan kompresi Gzip bawaan
+│   │   ├── app.js             # Bootstrapper utama & konfigurasi Phaser 3
+│   │   ├── scenes/            # Direktori Adegan (Scenes) Phaser
+│   │   │   ├── BootScene.js   # Memuat loader bar & aset awal
+│   │   │   ├── PreloadScene.js# Preloader asinkron seluruh aset visual & suara
+│   │   │   ├── MenuScene.js   # UI menu utama & konfigurasi pemain/bot
+│   │   │   ├── PrologueScene.js# Pengantar naratif dengan efek typewriter & parallax
+│   │   │   ├── GameScene.js   # Arena utama papan 10x10, ular, tangga, & token
+│   │   │   └── HUDScene.js    # Lapisan UI paralel overlay (Dice Gauge, Timer, Modal)
+│   │   ├── components/        # Komponen Logika Modular Game
+│   │   │   ├── BoardBuilder.js# Alur pembentuk grid 10x10 & render Graphics neon
+│   │   │   ├── DiceGauge.js   # Mekanisme pengisian daya dadu (LGR Style)
+│   │   │   ├── PlayerToken.js # Kelas bidak dengan sistem tween & evolusi sprite
+│   │   │   └── SFXEngine.js   # Pemutar musik & synthesizer audio chiptune
+│   │   └── contentData.js     # Modul bank data soal kuis, ular, & tangga
+├── package.json               # Konfigurasi npm script (start & dev)
+├── server.js                  # Server statis lokal dengan Gzip aktif (zlib)
+└── README.md                  # Halaman utama repositori GitHub
 ```
 
 ---
 
 ## 🛠️ Deskripsi Fungsionalitas Berkas
 
-### 1. File Root & HTML Utama
-*   **`src/index.html`**: Satu-satunya berkas HTML. Berfungsi sebagai penampung DOM utama. Semua transisi halaman (Main Menu, Setup Players, Prologue, Board Game Screen, Game Over Screen) dikelola dengan menyembunyikan/menampilkan section berkas lewat CSS (menggunakan kelas `.hidden`).
-*   **`README.md`**: Informasi publik repositori, daftar kontributor, deskripsi game, dan langkah instalasi dasar.
-*   **`package.json`**: Menyediakan konfigurasi dependensi dan skrip shortcut (`npm start` dan `npm run dev`) untuk mempermudah menjalankan server lokal statis bawaan Node.js.
-*   **`server.js`**: Server HTTP statis Node.js premium tanpa dependensi luar. Mendukung penanganan kompresi **gzip otomatis (`zlib`)** untuk mencegah lag transmisi berkas statis, logger terminal berwarna, perlindungan directory traversal, caching web, dan penanganan status error 404/500 secara aman.
+### 1. File Root & HTML Entry Point
+*   **`src/index.html`**: Entry point tunggal. Berfungsi sebagai wadah bagi Canvas Phaser 3 WebGL dan menampung elemen DOM absolut di atasnya (untuk overlay UI Glassmorphism seperti layar kuis).
+*   **`server.js`**: Server statis lokal zero-dependency dengan kompresi **gzip otomatis (`zlib`)** yang krusial untuk mempercepat loading aset gambar resolusi tinggi dan berkas JSON game di browser.
+*   **`package.json`**: Script shortcut (`npm start`) untuk mengaktifkan `server.js` dengan port 3000.
 
-### 2. Modul JavaScript (`src/js/`)
-Semua kode program JavaScript ditulis menggunakan **ES6 Modules** (`import`/`export`) demi menjaga keterbacaan, keterawatan, dan isolasi fungsionalitas.
+### 2. Konfigurasi Utama (`src/js/app.js`)
+*   Inisialisasi game Phaser menggunakan objek konfigurasi `Phaser.Types.Core.GameConfig`.
+*   Mengatur tipe render (`Phaser.AUTO` yang memprioritaskan **WebGL** dengan fallback **Canvas**).
+*   Menentukan resolusi dasar yang responsif dan sistem skala (`Phaser.Scale.FIT`) agar papan otomatis menyesuaikan ukuran layar perangkat tanpa merusak rasio visual.
+*   Mendaftarkan seluruh Scene game ke dalam sistem manajer scene Phaser.
 
-*   **`js/app.js`**:
-    *   Mengatur transisi antarmuka (Routing) antar layar.
-    *   Menangani pengaturan awal permainan (inisialisasi jumlah pemain, pendaftaran nama, dan aktivasi AI Bot).
-    *   Memicu inisialisasi awal seluruh modul lain (`audio.js`, `board.js`, `game.js`).
-*   **`js/game.js`**:
-    *   *Heartbeat* permainan. Berfungsi sebagai State Machine utama game (`PRE_GAME`, `PROLOGUE`, `PLAYING`, `PAUSED`, `QUIZ_MODAL`, `SKULL_MODAL`, `GAME_OVER`).
-    *   Mengelola giliran pemain (*Turn Management*), penghitung timer giliran (10 detik), dan memicu gerakan AI Bot saat gilirannya tiba.
-    *   Mengecek kondisi menang (tepat mendarat di petak 100) atau kalah (Drop Out karena petak tengkorak 3 kali).
-*   **`js/board.js`**:
-    *   Merender visualisasi papan 10x10 ke dalam DOM.
-    *   Menggambar jalur Ular dan Tangga secara dinamis menggunakan **SVG Overlay** di atas papan. Jalur digambar secara otomatis berdasarkan koordinat tengah dari petak awal dan akhir.
-    *   Mengatur reposisi token pemain secara dinamis agar tidak bertumpuk jika berada di petak yang sama.
-*   **`js/dice.js`**:
-    *   Mengimplementasikan mekanika **Dice Gauge** (pengukur daya interaktif).
-    *   Mendeteksi aksi penahanan tombol dadu (*mouse down* / *touch start*) dan pelepasan tombol (*mouse up* / *touch end*) untuk menghitung `chargePercent`.
-    *   Mengunci angka target dadu berdasarkan rentang persentase pengisian daya dadu.
-    *   Memicu animasi dadu bergulir (3D/2D visual rolling).
-*   **`js/player.js`**:
-    *   Mendefinisikan *class* `Player` yang memuat data: nama, indeks, posisi petak saat ini (0-100), status skorsing, jumlah pelanggaran tengkorak, tingkat evolusi, dan status AI Bot.
-    *   Menangani transisi evolusi karakter secara otomatis ketika posisi melewati batas (25, 50, 75, 100).
-*   **`js/quiz.js`**:
-    *   Menyimpan bank soal kuis mengenai Peraturan Akademik & Tata Tertib IPB.
-    *   Merender modal pertanyaan kuis, pilihan ganda, dan mengecek kebenaran jawaban pemain.
-*   **`js/audio.js`**:
-    *   Mengelola pustaka suara game.
-    *   Memutar BGM yang berbeda untuk setiap fase semester/level petak secara otomatis.
-    *   Memutar SFX seperti dadu berputar, sanksi tengkorak (bom), ular merosot, tangga naik, kuis benar/salah, dan lagu kemenangan.
+### 3. Pengelola Alur Adegan (`src/js/scenes/`)
+*   **`BootScene.js`**: Adegan awal yang sangat ringan. Bertanggung jawab memuat grafis loading bar neon IPB dan memicu transisi cepat ke Preload.
+*   **`PreloadScene.js`**: Preloader asinkron. Memuat 17 lembar sprite evolusi karakter, 100 gambar gedung kampus (untuk skin petak unik), aset suara MP3, dan font modern. Menampilkan progres loading bar yang halus secara visual.
+*   **`MenuScene.js`**: Adegan menu utama dengan tampilan Glassmorphism beraksen emas IPB. Menangani pengaturan awal jumlah pemain, penamaan, dan pemilihan jenis bot AI.
+*   **`PrologueScene.js`**: Sinematik pengantar cerita mahasiswa baru. Menggunakan efek gulir latar belakang (*parallax*), partikel debu melayang, dan efek teks mengetik (*typewriter effect*).
+*   **`GameScene.js`**: Core Engine utama dari papan permainan.
+    *   Mengatur giliran pemain, timer putaran, koordinat petak zig-zag 10x10.
+    *   Menggambar rute lintasan ular (melengkung berdenyut neon) dan tangga (pijakan glowing) menggunakan `Phaser.GameObjects.Graphics`.
+    *   Mengatur reposisi token pemain agar tidak bertumpuk jika berada di petak yang sama.
+*   **`HUDScene.js`**: Berjalan secara paralel di atas `GameScene` untuk memisahkan logika UI dengan visual papan. Menangani timer 10 detik, sidebar status bar, meteran pengisi daya dadu (*Dice Gauge*), dan modul kuis overlay.
 
-### 3. File Desain & CSS (`src/css/`)
-*   **`css/main.css`**: Berisi fondasi visual aplikasi. Menampung variabel CSS (CSS Variables) untuk warna dasar IPB University (Biru Tua, Emas, Putih, dll.), *reset* margin, konfigurasi tipografi global, efek kaca (*Glassmorphism*), dan animasi dasar.
-*   **`css/board.css`**: Khusus mengatur styling dari papan grid 10x10, visualisasi petak khusus (petak tengkorak hitam, kuis biru tanda tanya, tangga cokelat, ular hijau), SVG overlay, serta pergerakan mulus bidak (*piece transition*).
-*   **`css/ui.css`**: Styling antarmuka non-papan seperti tombol Glassmorphism modern, layout setup pemain, meteran *Dice Gauge* yang berdenyut dinamis, status bar pemain di pinggir layar, panel narasi prologue, dan modal pop-up kuis.
+### 4. Komponen Logika Modular (`src/js/components/`)
+*   **`BoardBuilder.js`**: Bertugas menghitung tata letak sel koordinat papan zig-zag dan menggambar garis visual kurva Bezier bercahaya untuk ular dan tangga secara dinamis.
+*   **`PlayerToken.js`**: Membungkus objek Sprite bidak. Menangani transisi perpindahan asinkron langkah-demi-langkah (menggunakan *Phaser Tweens* dengan efek pantulan *elastic easing*) dan mendeteksi perubahan sprite ketika bidak melewati petak batas evolusi.
+*   **`DiceGauge.js`**: Logika pengukur dadu. Mendeteksi aksi input sentuhan/mouse untuk mengisi energi dadu, serta memicu animasi berputarnya dadu 3D/2D.
+*   **`SFXEngine.js`**: Sistem audio modular yang otomatis mengatur pergantian musik dinamis per semester dan mensintesis suara retro chiptune (menggunakan *Web Audio API*) apabila berkas MP3 fisik kosong.
 
 ---
 
-## 🔄 Diagram Interaksi dan Alur Data
+## 🔄 Diagram Interaksi Adegan dan Alur Data Phaser
 
-Secara arsitektural, modul-modul ini terhubung secara terstruktur seperti digambarkan oleh diagram berikut:
+Seluruh adegan dan komponen logika di dalam engine Phaser 3 terhubung sebagai berikut:
 
 ```mermaid
 graph TD
-    app[js/app.js - Router & Boot] --> game[js/game.js - Engine Core]
-    app --> audio[js/audio.js - Sound System]
+    App[js/app.js - Phaser Config] --> Boot[scenes/BootScene.js]
+    Boot --> Preload[scenes/PreloadScene.js]
+    Preload --> Menu[scenes/MenuScene.js]
+    Menu --> Prologue[scenes/PrologueScene.js]
     
-    game --> board[js/board.js - Visual Board & SVG]
-    game --> dice[js/dice.js - Dice Gauge]
-    game --> player[js/player.js - Player States & Evolution]
-    game --> quiz[js/quiz.js - Quiz Modals]
+    Prologue --> Game[scenes/GameScene.js - Core Board]
+    Game <--> HUD[scenes/HUDScene.js - UI Overlay]
     
-    dice -- "Mengembalikan Angka Dadu" --> game
-    quiz -- "Mengembalikan Hasil Jawaban (Benar/Salah)" --> game
+    Game --> Builder[components/BoardBuilder.js]
+    Game --> Token[components/PlayerToken.js]
     
-    player -- "Mengubah Posisi & Sprite" --> board
-    game -- "Mengubah BGM sesuai level petak" --> audio
+    HUD --> Gauge[components/DiceGauge.js]
+    HUD --> Audio[components/SFXEngine.js]
 ```
 
-### 🎮 Siklus Perjalanan Giliran (Game Turn Loop)
-1.  **Start Turn:** `game.js` mengaktifkan giliran `Player X` dan memulai timer 10 detik. Jika player adalah Bot, game akan memicu pelemparan otomatis setelah delay 1.5 detik.
-2.  **Dice Roll Input:** Pemain menahan tombol dadu, mengaktifkan `dice.js` untuk menaikkan gauge. Saat dilepas, `dice.js` mengunci angka dadu dan mengirimkannya kembali ke `game.js`.
-3.  **Movement:** `game.js` memperbarui posisi `Player X` secara bertahap (1 per 1 petak) di dalam `player.js`, lalu memanggil `board.js` untuk merender animasi perpindahan bidak di layar.
-4.  **Tile Action Trigger:** Ketika bidak berhenti di petak tujuan:
-    *   **Petak Biasa:** Menampilkan pop-up motivasi belajar/prestasi kecil, lalu giliran selesai.
-    *   **Petak Tangga / Ular:** Bidak bergeser otomatis mengikuti rute, menampilkan pop-up alasan, lalu giliran selesai.
-    *   **Petak Kuis (?):** `game.js` memanggil `quiz.js` untuk menampilkan soal kuis. Jika benar, pemain melangkah maju (opsional, sesuai game rules); jika salah, tetap di tempat atau mundur. Giliran selesai setelah modal ditutup.
-    *   **Petak Tengkorak:** Menampilkan sanksi, menandai status skorsing pemain untuk giliran berikutnya, memotong posisi mundur 4 baris, menambah hitungan pelanggaran tengkorak. Giliran selesai.
-5.  **Check Game Status & Turn Swap:** `game.js` memeriksa apakah ada pemain yang mencapai petak 100 (Win) atau mendapat drop out (karena petak tengkorak 3x). Jika tidak ada, giliran digeser ke `Player X+1`.
+### 🎮 Siklus Perjalanan Giliran di Phaser (Game Turn Loop)
+1.  **Turn Activation:** `GameScene` mengaktifkan giliran `PlayerToken`. Kamera melakukan *zoom-in* secara halus ke koordinat bidak aktif. Adegan HUD menampilkan nama pemain dan mengaktifkan timer 10s.
+2.  **Dice Roll:** Pemain menahan tombol dadu. `DiceGauge` di HUDScene berdenyut warna neon dan mengukur daya. Saat dilepas, angka dadu dikirim ke `GameScene`.
+3.  **Step Movement:** `GameScene` memicu pergerakan bidak langkah-demi-langkah di `PlayerToken`. Kamera mengikuti gerakan bidak secara dinamis (*camera follow*). Bidak memantul secara elastis di setiap sel yang dilewatinya.
+4.  **Evolusi Real-Time:** Saat bidak melintasi batas petak (misal petak 25), `PlayerToken` memicu efek partikel ledakan kecil dan memperbarui tekstur sprite karakter ke tingkat berikutnya secara instan.
+5.  **Tile Action Trigger:** 
+    *   **Petak Tangga:** Kamera bergeser lambat mengikuti gerakan bidak meluncur naik diiringi jejak partikel bintang berkilauan.
+    *   **Petak Ular:** Kamera bergetar kecil, bidak meluncur turun diselimuti asap partikel hijau beracun.
+    *   **Petak Kuis:** HUDScene memicu pop-up dialog kuis. Evaluasi jawaban menentukan apakah kamera mundur atau mendapat bonus maju.
+6.  **End Turn:** Kamera kembali melakukan *zoom-out* untuk menampilkan seluruh papan, lalu giliran dipindahkan ke pemain berikutnya.
